@@ -385,7 +385,7 @@ public class GameManager {
     }
 
     public void run(){
-        this.g.initializeBoard();
+        GameManager.g.initializeBoard();
         System.out.println("WELCOME TO CHESS -------");
         System.out.println("Which one first? 1. Black 2. White");
         Scanner sc = new Scanner(System.in);
@@ -397,7 +397,7 @@ public class GameManager {
             case 2:
                 GameManager.g.currentTurn = GameManager.g.white;
         }
-        this.g.displayBoard();
+        GameManager.g.displayBoard();
     }
 
     private static void directionMoves(Piece p, int rowInc, int colInc) {
@@ -415,7 +415,7 @@ public class GameManager {
         }
     }
 
-    public boolean checkForCheck(Piece movedPiece, int newRow, int newCol, int oldRow, int oldCol) {
+    public static boolean checkForCheck(Piece movedPiece, int newRow, int newCol, int oldRow, int oldCol) {
         // Store the original board state
         Piece originalDestPiece = g.board[newRow][newCol];
         
@@ -446,7 +446,7 @@ public class GameManager {
         return isInCheck;
     }
 
-    private boolean isKingInCheck(King king) {
+    private static boolean isKingInCheck(King king) {
         // Check for threats from all directions
         return isPawnThreat(king) ||
             isKnightThreat(king) ||
@@ -454,7 +454,7 @@ public class GameManager {
             isOrthogonalThreat(king);
     }
 
-    private boolean isPawnThreat(King king) {
+    private static boolean isPawnThreat(King king) {
         int direction = (king.side == g.white) ? 1 : -1;
         int row = king.loc[0];
         int col = king.loc[1];
@@ -474,7 +474,7 @@ public class GameManager {
         return false;
     }
 
-    private boolean isKnightThreat(King king) {
+    private static boolean isKnightThreat(King king) {
         int[][] knightMoves = {{-2,-1}, {-2,1}, {-1,-2}, {-1,2}, 
                             {1,-2}, {1,2}, {2,-1}, {2,1}};
         
@@ -492,7 +492,7 @@ public class GameManager {
         return false;
     }
 
-    private boolean isDiagonalThreat(King king) {
+    private static boolean isDiagonalThreat(King king) {
         int[][] directions = {{-1,-1}, {-1,1}, {1,-1}, {1,1}};
         
         for (int[] dir : directions) {
@@ -515,7 +515,7 @@ public class GameManager {
         return false;
     }
 
-    private boolean isOrthogonalThreat(King king) {
+    private static boolean isOrthogonalThreat(King king) {
         int[][] directions = {{-1,0}, {1,0}, {0,-1}, {0,1}};
         
         for (int[] dir : directions) {

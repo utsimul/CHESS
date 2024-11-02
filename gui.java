@@ -210,7 +210,7 @@ class SquareMouseAdapter extends MouseAdapter{
                     gui.displayMessage("Piece taken!");
                 }
             }
-            
+            if(GameManager.checkForCheck(movingPiece,this.square.row,this.square.col,movingPiece.loc[0],movingPiece.loc[1])) gui.displayMessage("CHECK!");
             movingPiece.move(new int[]{this.square.row, this.square.col});
             sourceSquare.p = null; 
             sourceSquare.updateDisplay();

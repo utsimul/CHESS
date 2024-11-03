@@ -13,9 +13,10 @@ public class gui{
     private static boolean isReversed = false;
     public static Color highlighter = new Color(144, 238, 144, 128);
     public static ChessSquare selected;
+    public static JFrame frame;
     public static void main(String[] args) {
         // Initialize the frame
-        JFrame frame = new JFrame("Chess");
+        frame = new JFrame("Chess");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(900, 700); 
 
@@ -111,6 +112,20 @@ public class gui{
         sidePanel.add(scrollPane, BorderLayout.CENTER);
     }
 
+    public static void displayGameOver(String winningSide){
+        JPanel overlay = new JPanel();
+        overlay.setBackground(new Color(0, 100, 0, 200)); 
+        overlay.setLayout(new GridBagLayout());
+        JLabel message = new JLabel(winningSide + " WINS!!!! ");
+        message.setFont(new Font("Serif", Font.BOLD, 50));
+        message.setForeground(Color.WHITE);
+        overlay.add(message, new GridBagConstraints());
+
+        gui.frame.setGlassPane(overlay);
+        overlay.setVisible(true);
+        gui.frame.getGlassPane().setVisible(true);
+    }
+
     public static void displayMessage(String message){
         msgArea.append(message + "\n");
         msgArea.setCaretPosition(msgArea.getDocument().getLength());
@@ -176,6 +191,7 @@ class ChessSquare extends JPanel{
         gui.highlighted.clear();
     }
 
+
 }
 
 class SquareMouseAdapter extends MouseAdapter{
@@ -211,6 +227,13 @@ class SquareMouseAdapter extends MouseAdapter{
                 }
             }
             if(GameManager.checkForCheck(movingPiece,this.square.row,this.square.col,movingPiece.loc[0],movingPiece.loc[1])) gui.displayMessage("CHECK!");
+            if(GameManager.g.board[this.square.row][this.square.col] instanceof King){
+                if(GameManager.g.board[this.square.row][this.square.col].side == GameManager.g.white){
+                    gui.displayGameOver("BLACK");
+                }else{
+                    gui.displayGameOver("WHITE");
+                }
+            }
             movingPiece.move(new int[]{this.square.row, this.square.col});
             sourceSquare.p = null; 
             sourceSquare.updateDisplay();

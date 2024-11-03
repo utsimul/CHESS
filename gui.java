@@ -211,6 +211,7 @@ class SquareMouseAdapter extends MouseAdapter{
 
     @Override
     public void mouseExited(MouseEvent e){
+        if(gui.highlighted.contains(this.square)) return;
         square.setBackground(square.original);
     }
 

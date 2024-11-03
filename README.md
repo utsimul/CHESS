@@ -5,9 +5,9 @@ simple chess game with GUI
 
 ### How to use it:
 
-####: Check whether java is installed or not
+#### Check whether java is installed or not
 
-####: Compile both files:
+#### Compile both files:
 run this command in your terminal (make sure you are in the correct folder)
 ```java
 javac -sourcepath GameManager:gui *.java;

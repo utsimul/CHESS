@@ -22,5 +22,6 @@ java gui
 - [ ] Checking only the directions necessary for check after a piece movement
 - [ ] Making a function for checking for checkmate so that the game can end more logically.
 - [ ] Finding and correcting potential glitches and flaws
+- [ ] Check for safety of king while generating possible moves
 
 In case a user of this code finds a glitch/error/flaw/potential scope for bettering the code, I'd be glad if you let me know :)

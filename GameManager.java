@@ -538,19 +538,3 @@ public class GameManager {
         return false;
     }
 }
-/*TO DO
- * 1. Understand Pawn logic
- * 2. Incorporate safety of king while generating possible moves
- * 3. Game loop & turns
- * 4. Check for check and checkmate -> 2 possible moves generate 2 possible cases:
- *       a. Opposition's piece risk to throw off king (check) -> see from recently moved piece's end
- *       b. Own piece exposes kings position to opposition's pieces (check) -> see from king's end 
- */
-
-
-/*for new position of piece generate moves:
- * //opposition's piece ahead is king (causes check)
-                if(p instanceof King){
-                    piece.can_cause_check_to_opp = true;
-                }
- */

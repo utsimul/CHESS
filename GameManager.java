@@ -81,89 +81,6 @@ class Game {
         
     }
 
-    void displayBoard() {
-        for (int row = 0; row < 8; row++) {
-            for (int col = 0; col < 8; col++) {
-                if (GameManager.g.board[row][col] != null) {
-                    // Display piece on top of the correct background
-                    System.out.print((row + col) % 2 == 0 ? "\u001B[47m" : "\u001B[40m"); // White or Black background
-                    System.out.print(" " + GameManager.g.board[row][col].symbol + " ");
-                } else {
-                    // Display empty black or white square
-                    System.out.print((row + col) % 2 == 0 ? "\u001B[47m   " : "\u001B[40m   "); // White or Black square
-                }
-                System.out.print("\u001B[0m"); // Reset to default after each square
-            }
-            System.out.println(); // New line after each row
-        }
-
-    
-    }
-    void displayBoardReversed() {
-        for (int row = 7; row >= 0; row--) { 
-            for (int col = 7; col >= 0; col--) { 
-                if (GameManager.g.board[row][col] != null) {
-                    System.out.print((row + col) % 2 == 0 ? "\u001B[47m" : "\u001B[40m");
-                    System.out.print(" " + GameManager.g.board[row][col].symbol + " ");
-                } else {
-                    System.out.print((row + col) % 2 == 0 ? "\u001B[47m   " : "\u001B[40m   "); 
-                }
-                System.out.print("\u001B[0m"); 
-            }
-            System.out.println(); 
-        }
-    }
-    void displayMoves(List<int[]> moves){
-        int counter=0;
-        int n_moves = moves.size();
-        for(int row=0; row<8; row++){
-            for(int col=0;col<8;col++){
-                if(counter<n_moves){
-                    if(row==moves.get(counter)[0] && col==moves.get(counter)[1]){
-                        System.out.print((row + col) % 2 == 0 ? "\u001B[47m" : "\u001B[40m"); // White or Black background
-                        System.out.print(" " + GameManager.g.board[row][col].symbol);
-                        System.out.print(" " + 'X' + " ");
-                        counter++;
-                    }
-                }else if (GameManager.g.board[row][col] != null) {
-                    // Display piece on top of the correct background
-                    System.out.print((row + col) % 2 == 0 ? "\u001B[47m" : "\u001B[40m"); // White or Black background
-                    System.out.print(" " + GameManager.g.board[row][col].symbol + " ");
-                } else {
-                    // Display empty black or white square
-                    System.out.print((row + col) % 2 == 0 ? "\u001B[47m   " : "\u001B[40m   "); // White or Black square
-                }
-                System.out.print("\u001B[0m");
-            }
-            System.out.println();
-        }
-    }
-
-    void displayMovesReversed(List<int[]>moves){
-        int counter=moves.size()-1;
-        for(int row=8; row>=0; row--){
-            for(int col=8;col>=0;col--){
-                if(counter>=0){
-                    if(row==moves.get(counter)[0] && col==moves.get(counter)[1]){
-                        System.out.print((row + col) % 2 == 0 ? "\u001B[47m" : "\u001B[40m"); // White or Black background
-                        System.out.print(" " + GameManager.g.board[row][col].symbol);
-                        System.out.print(" " + 'X' + " ");
-                        counter++;
-                    }
-                }else if (GameManager.g.board[row][col] != null) {
-                    // Display piece on top of the correct background
-                    System.out.print((row + col) % 2 == 0 ? "\u001B[47m" : "\u001B[40m"); // White or Black background
-                    System.out.print(" " + GameManager.g.board[row][col].symbol + " ");
-                } else {
-                    // Display empty black or white square
-                    System.out.print((row + col) % 2 == 0 ? "\u001B[47m   " : "\u001B[40m   "); // White or Black square
-                }
-                System.out.print("\u001B[0m");
-            }
-            System.out.println();
-        }
-    }
-
 }
 
 class User {
@@ -210,9 +127,7 @@ abstract class Piece {
         return row >= 0 && row < 8 && col >= 0 && col < 8;
     }
 
-    // public ImageIcon getImage() {
-    //     return ChessImageManager.getInstance().getImage(this);
-    // }
+
 }
 
 class Rook extends Piece {
@@ -437,8 +352,7 @@ public class GameManager {
         if (!isInCheck) {
             isInCheck = isKingInCheck(enemyKing);
         }
-        
-        // Restore the original board state
+
         g.board[oldRow][oldCol] = movedPiece;
         g.board[newRow][newCol] = originalDestPiece;
         movedPiece.loc = new int[]{oldRow, oldCol};

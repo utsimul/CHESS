@@ -312,7 +312,7 @@ public class GameManager {
             case 2:
                 GameManager.g.currentTurn = GameManager.g.white;
         }
-        GameManager.g.displayBoard();
+        //GameManager.g.displayBoard();
     }
 
     private static void directionMoves(Piece p, int rowInc, int colInc) {

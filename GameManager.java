@@ -1,6 +1,15 @@
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseEvent;
 
 class Game {
     User white;
@@ -281,6 +290,11 @@ class Queen extends Piece {
 
 public class GameManager {
     static Game g = new Game();
+    private static boolean botEnabled = false;
+    private static boolean botPlaysWhite = false;
+    private static Socket botSocket;
+    private static PrintWriter botOut;
+    private static BufferedReader botIn;
     public static void main(String[] args) {
         // g.initializeBoard();
         // // while (!g.isGameOver) {
@@ -293,9 +307,125 @@ public class GameManager {
         // g.displayBoard();
     }
 
+    public static boolean isBotEnabled() {
+        return botEnabled;
+    }
+    
+    public static boolean isBotPlayingWhite() {
+        return botPlaysWhite;
+    }
+
     public static void allMoves(Piece p, int[][] directions) {
         for (int[] direction : directions) {
             directionMoves(p, direction[0], direction[1]);
+        }
+    }
+
+    private static boolean isValidPosition(int row, int col) {
+        return row >= 0 && row < 8 && col >= 0 && col < 8;
+    }
+
+    public static void connectToBot(String host, int port, boolean playsWhite) throws IOException {
+        botSocket = new Socket(host, port);
+        botOut = new PrintWriter(botSocket.getOutputStream(), true);
+        botIn = new BufferedReader(new InputStreamReader(botSocket.getInputStream()));
+        botEnabled = true;
+        botPlaysWhite = playsWhite;
+        gui.displayMessage("Connected to chess bot playing as " + (playsWhite ? "WHITE" : "BLACK"));
+    }
+    
+    public static void makeBotMove() {
+        if (!botEnabled || (botPlaysWhite && g.currentTurn != g.white) || 
+            (!botPlaysWhite && g.currentTurn != g.black)) {
+            return;
+        }
+        
+        try {
+            // Send current board state to bot
+            String boardState = getBoardState();
+            botOut.println(boardState);
+            
+            // Get bot's move
+            String moveStr = botIn.readLine();
+            if (moveStr != null) {
+                processBotMove(moveStr);
+            }
+        } catch (IOException e) {
+            gui.displayMessage("Bot connection error: " + e.getMessage());
+            botEnabled = false;
+        }
+    }
+    
+    private static String getBoardState() {
+        StringBuilder sb = new StringBuilder();
+        for (int row = 0; row < 8; row++) {
+            for (int col = 0; col < 8; col++) {
+                Piece p = g.board[row][col];
+                if (p == null) {
+                    sb.append('.');
+                } else {
+                    char c = getPieceChar(p);
+                    sb.append(p.side == g.white ? Character.toUpperCase(c) : Character.toLowerCase(c));
+                }
+            }
+        }
+        return sb.toString();
+    }
+
+    private static char getPieceChar(Piece p) {
+        if (p instanceof Pawn) return 'p';
+        if (p instanceof Rook) return 'r';
+        if (p instanceof Knight) return 'n';
+        if (p instanceof Bishop) return 'b';
+        if (p instanceof Queen) return 'q';
+        if (p instanceof King) return 'k';
+        return '.';
+    }
+    
+    private static void processBotMove(String moveStr) {
+        // Format: "e2e4" (from square to square)
+        if (moveStr == null || moveStr.length() != 4) return;
+        
+        int fromCol = moveStr.charAt(0) - 'a';
+        int fromRow = 8 - (moveStr.charAt(1) - '0');
+        int toCol = moveStr.charAt(2) - 'a';
+        int toRow = 8 - (moveStr.charAt(3) - '0');
+        
+        if (!isValidPosition(fromRow, fromCol) || !isValidPosition(toRow, toCol)) return;
+        
+        Piece movingPiece = g.board[fromRow][fromCol];
+        if (movingPiece == null || movingPiece.side != g.currentTurn) return;
+        
+        // Find corresponding squares in GUI
+        ChessSquare sourceSquare = gui.squares.get(fromRow * 8 + fromCol);
+        ChessSquare targetSquare = gui.squares.get(toRow * 8 + toCol);
+        
+        // Simulate the selection of the source square first
+        if (sourceSquare != null) {
+            MouseListener[] sourceListeners = sourceSquare.getMouseListeners();
+            if (sourceListeners.length > 0) {
+                MouseEvent selectEvent = new MouseEvent(
+                    sourceSquare,
+                    MouseEvent.MOUSE_CLICKED,
+                    System.currentTimeMillis(),
+                    0, 0, 0, 1, false
+                );
+                sourceListeners[0].mouseClicked(selectEvent);
+            }
+        }
+        
+        // Then simulate the click on the target square
+        if (targetSquare != null) {
+            MouseListener[] targetListeners = targetSquare.getMouseListeners();
+            if (targetListeners.length > 0) {
+                MouseEvent moveEvent = new MouseEvent(
+                    targetSquare,
+                    MouseEvent.MOUSE_CLICKED,
+                    System.currentTimeMillis(),
+                    0, 0, 0, 1, false
+                );
+                targetListeners[0].mouseClicked(moveEvent);
+            }
         }
     }
 
